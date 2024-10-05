@@ -1,55 +1,83 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import axios from "axios";
 
 const QueueMessagesPage = () => {
-  const pathname = usePathname(); // Récupère l'URL actuelle
-  const [message, setMessage] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const pathname = usePathname();
+  const [messages, setMessages] = useState([]);
   const [error, setError] = useState(null);
+  const [isConnected, setIsConnected] = useState(false);
 
   // Extraire le nom de la queue à partir de l'URL
-  const queueName = pathname.split("/")[2]; // Assure-toi que cela correspond à ta structure de chemin d'URL
+  const queueName = pathname.split("/")[2];
 
-  // Fonction pour récupérer les messages de la queue
-  const fetchMessages = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(
+  useEffect(() => {
+    let eventSource;
+
+    if (queueName) {
+      console.log(`Création de l'EventSource pour la queue: ${queueName}`);
+      eventSource = new EventSource(
         `http://localhost:3001/queues/${queueName}/messages`
       );
-      setMessage(response.data.message); // Met à jour l'état avec le message reçu
-      setLoading(false);
-    } catch (error) {
-      setError("Erreur lors de la récupération des messages");
-      setLoading(false);
-    }
-  };
 
-  // Appeler fetchMessages lors du chargement initial du composant
-  useEffect(() => {
-    if (queueName) {
-      fetchMessages();
+      eventSource.onopen = () => {
+        console.log("Connexion SSE établie");
+        setIsConnected(true);
+        setError(null);
+      };
+
+      eventSource.onmessage = (event) => {
+        console.log("Message SSE reçu:", event.data);
+        try {
+          const newMessage = JSON.parse(event.data);
+          setMessages((prevMessages) => [...prevMessages, newMessage.message]);
+        } catch (err) {
+          console.error("Erreur lors du parsing du message:", err);
+          setError("Erreur lors du traitement du message");
+        }
+      };
+
+      eventSource.onerror = (err) => {
+        console.error("Erreur SSE:", err);
+        setIsConnected(false);
+        setError("Erreur de connexion au serveur");
+        eventSource.close();
+      };
     }
+
+    return () => {
+      if (eventSource) {
+        console.log("Fermeture de la connexion SSE");
+        eventSource.close();
+      }
+    };
   }, [queueName]);
 
   return (
-    <div>
-      <h1>Message pour la queue : {queueName}</h1>
-      <button
-        onClick={fetchMessages}
-        className="mb-4 p-2 bg-blue-500 text-white rounded"
-      >
-        Actualiser le message
-      </button>
-      {loading && <div>Chargement du message...</div>}
-      {error && <div>{error}</div>}
-      {message ? (
-        <p>{message}</p>
-      ) : (
-        <p>Aucun message à afficher pour cette queue.</p>
-      )}
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">
+        Messages pour la queue : {queueName}
+      </h1>
+      {error && <div className="text-red-500 mb-4">{error}</div>}
+      <div className="mb-4">
+        Statut de connexion :{" "}
+        {isConnected ? (
+          <span className="text-green-500">Connecté</span>
+        ) : (
+          <span className="text-red-500">Déconnecté</span>
+        )}
+      </div>
+      <div className="border p-4 rounded-lg">
+        {messages.length > 0 ? (
+          messages.map((msg, index) => (
+            <p key={index} className="mb-2 p-2">
+              {msg}
+            </p>
+          ))
+        ) : (
+          <p>Aucun message pour cette queue.</p>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,21 +1,22 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+
 const Menu = () => {
-  const [topics, setTopics] = useState([]);
+  const [queues, setQueues] = useState([]);
 
   useEffect(() => {
-    const fetchTopics = async () => {
+    const fetchQueues = async () => {
       try {
-        const res = await fetch("http://localhost:3001/topics");
+        const res = await fetch("http://localhost:3001/queues");
         const data = await res.json();
-        setTopics(data);
+        setQueues(data);
       } catch (error) {
-        console.error("Erreur lors de la récupération des topics:", error);
+        console.error("Erreur lors de la récupération des queues:", error);
       }
     };
 
-    fetchTopics();
+    fetchQueues();
   }, []);
 
   return (
@@ -23,22 +24,22 @@ const Menu = () => {
       {/* Menu au centre de la page */}
       <div className="flex justify-center items-center h-80">
         <div className="text-2xl lg:text-4xl font-bold underline">
-          Menu des topics
+          Menu des queues
         </div>
       </div>
 
-      {/* Liste des topics */}
+      {/* Liste des queues */}
       <div className="flex flex-col items-center">
-        {topics.length > 0 ? (
-          topics.map((topic, index) => (
+        {queues.length > 0 ? (
+          queues.map((queue, index) => (
             <div key={index} className="mt-2 text-lg">
-              <Link href={`/topics/${topic}`} className="underline text-cyan-600">
-                {topic}
+              <Link href={`/queues/${queue}`} className="underline text-cyan-600">
+                {queue}
               </Link>
             </div>
           ))
         ) : (
-          <p>Aucun topic trouvé</p>
+          <p>Aucune queue trouvée</p>
         )}
       </div>
     </div>

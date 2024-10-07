@@ -3,15 +3,16 @@ const axios = require("axios");
 const cors = require("cors");
 const stompit = require("stompit");
 const port = 3001;
+const os = require("os");
 
 const ACTIVE_MQ_USER = "admin"; // Identifiant de l'utilisateur pour ActiveMQ
 const ACTIVE_MQ_PASSWORD = "admin"; // Mot de passe pour ActiveMQ
 const ACTIVE_MQ_BROKER_URL = "http://localhost:8161/api/jolokia"; // URL de l'API Jolokia pour accéder à ActiveMQ
 
 const corsOptions = {
-  origin: "http://localhost:3000", // Autoriser uniquement les requêtes depuis le front-end sur localhost:3000
-  methods: "GET", // Autoriser uniquement les requêtes GET
-  allowedHeaders: ["Content-Type"], // Autoriser uniquement le header Content-Type
+  origin: "*", // Autorise les requêtes depuis n'importe quelle origine
+  methods: "GET",
+  allowedHeaders: ["Content-Type"],
 };
 
 const app = express();
@@ -125,6 +126,15 @@ app.get("/queues/:queueName/messages", (req, res) => {
 });
 
 // Démarrer le serveur Express sur le port spécifié
-app.listen(port, () => {
-  console.log(`API en écoute sur http://localhost:${port}`); // Afficher un message lorsque le serveur est prêt
+app.listen(port, "0.0.0.0", () => {
+  const interfaces = os.networkInterfaces();
+  const addresses = Object.values(interfaces)
+    .flat()
+    .filter((iface) => iface.family === "IPv4" && !iface.internal)
+    .map((iface) => iface.address);
+
+  console.log(`API accessible sur :`);
+  addresses.forEach((address) => {
+    console.log(`http://${address}:${port}`);
+  });
 });

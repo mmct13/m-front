@@ -20,7 +20,7 @@ const QueueMessagesPage = () => {
       console.log(`Création de l'EventSource pour la queue: ${queueName}`);
       // Création de la connexion SSE avec l'URL du serveur
       eventSource = new EventSource(
-        `http://localhost:3001/queues/${queueName}/messages`
+        `http://192.168.1.6:3001/queues/${queueName}/messages`
       );
 
       // Gérer l'ouverture de la connexion SSE

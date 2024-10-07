@@ -8,7 +8,7 @@ const Menu = () => {
   useEffect(() => {
     const fetchQueues = async () => {
       try {
-        const res = await fetch("http://localhost:3001/queues");
+        const res = await fetch("http://192.168.1.6:3001/queues");
         const data = await res.json();
         setQueues(data);
       } catch (error) {
@@ -33,7 +33,10 @@ const Menu = () => {
         {queues.length > 0 ? (
           queues.map((queue, index) => (
             <div key={index} className="mt-2 text-lg">
-              <Link href={`/queues/${queue}`} className="underline text-cyan-600">
+              <Link
+                href={`/queues/${queue}`}
+                className="underline text-cyan-600"
+              >
                 {queue}
               </Link>
             </div>

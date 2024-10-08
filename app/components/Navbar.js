@@ -1,6 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-
+import logo from "../logo.png";
 const Navbar = () => {
   return (
     <div>
@@ -16,7 +17,7 @@ const Navbar = () => {
           </div>
           <div className="flex items-center">
             <span className="self-center text-center text-lg lg:text-2xl font-semibold whitespace-nowrap dark:text-white">
-              APACHE ActiveMQ
+              <Image src={logo} width={260} height={40} alt="Logo" />
             </span>
           </div>
         </div>

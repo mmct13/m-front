@@ -19,7 +19,7 @@ const QueueMessagesPage = () => {
       console.log(`Création de l'EventSource pour la queue: ${queueName}`);
       setIsConnecting(true); // Activer l'indicateur de connexion
       eventSource = new EventSource(
-        `http://192.168.1.3:3001/queues/${queueName}/messages`
+        `http://192.168.1.18:3001/queues/${queueName}/messages`
       );
 
       eventSource.onopen = () => {

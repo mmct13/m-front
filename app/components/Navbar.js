@@ -12,11 +12,12 @@ const Navbar = () => {
               href="/"
               className="self-center text-center text-lg lg:text-2xl font-semibold whitespace-nowrap dark:text-white"
             >
-              Middleware de messagerie - Groupe 5
+              Application d'informations - M1 INFO
             </Link>
           </div>
           <div className="flex items-center">
             <span className="self-center text-center text-lg lg:text-2xl font-semibold whitespace-nowrap dark:text-white">
+              Développée à l'aide de
               <Image src={logo} width={260} height={40} alt="Logo" />
             </span>
           </div>

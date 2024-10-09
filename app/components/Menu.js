@@ -8,7 +8,7 @@ const Menu = () => {
   useEffect(() => {
     const fetchQueues = async () => {
       try {
-        const res = await fetch("http://192.168.1.3:3001/queues");
+        const res = await fetch("http://192.168.1.18:3001/queues");
         const data = await res.json();
         setQueues(data);
       } catch (error) {
